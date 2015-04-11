@@ -4,8 +4,8 @@ var PLAYER_TWO_MARKER = 2;
 var GAME_GRID_COLUMNS = 4;
 var GAME_GRID_ROWS = 4;
 var LINE_OFFSET = 1;
-var HORIZONTALLY = "horizontal";
-var VERTICALLY = "vertical";
+var HORIZONTAL = "HORIZONTAL";
+var VERTICAL = "VERTICAL";
 var verticalLinesClaimed = [];
 var horizontalLinesClaimed = [];
 var boxesClaimed = [];
@@ -134,31 +134,40 @@ function restartGame() {
 }
 
 //just need to convert this for image toggling
-function replaceImage(imagePath, uploadTimestamp, jqueryObject, photoWidth, photoHeight) {
-	//--------------------------------------
-	// load the photo from its url and
-	// add it to the photowall when loaded
-	//--------------------------------------
-	var frameClass = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
-	var tooltip = $('<span data-tooltip aria-haspopup="true" class="has-tip" data-options="show_on:large" title="Large Screen Sizes"></span>');
+function visuallyMarkClaim(playerMarker, claimType, columnIndex, rowIndex) {
+	var resourceSelector = "." + claimType.toLowerCase() + "-" + columnIndex + "-" + rowIndex;
+	var resourcePath = "images/" + playerMarker + "-" + claimType + ".svg";
+	var resourceEvent = "";
 
-	if (photoWidth > photoHeight) {
-		var img = $('<img class="photo frame-style-' + frameClass + '" width="100%" data-width="' + photoWidth + '" data-height="' + photoHeight + '" alt="SOMETHING!">').attr('src', imagePath).attr(timestampAttribute, uploadTimestamp).load(function() {
-			if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
-				console.log('Image does not exist.');
-			} else {
-				$(jqueryObject).first().replaceWith(img);
-			}
-		});
-	} else {
-		var img = $('<img class="photo frame-style-' + frameClass + '" width="60%" data-width="' + photoWidth + '" data-height="' + photoHeight + '" alt="SOMETHING!">').attr('src', imagePath).attr(timestampAttribute, uploadTimestamp).load(function() {
-		if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
-				console.log('Image does not exist.');
-			} else {
-				$(jqueryObject).first().replaceWith(img);
-			}
-		});
+	switch (claimType) {
+		case HORIZONTAL:
+			resourceEvent = " onclick='turnsTaken += run(" + HORIZONTAL + ", " + columnIndex + ", " + rowIndex + ");'";
+			break;
+		case VERTICAL:
+			resourceEvent = " onclick='turnsTaken += run(" + VERTICAL + ", " + columnIndex + ", " + rowIndex + ");'";
+			break;
+		default:
+			resourceEvent = "";
+			break;
 	}
+	var imageForClaim = "<img" + resourceEvent + ">";
+
+	console.log("resourceSelector :" + resourceSelector);
+	console.log("resourcePath :" + resourcePath);
+	console.log("resourceEvent :" + resourceEvent);
+	console.log("newImageTag :" + imageForClaim);
+
+
+	// var loadedImage = $(imageForClaim).attr('src', resourcePath).load(function() {
+	// 		$(resourceSelector).first().replaceWith(loadedImage);
+	// 	}
+	// });
+
+	var loadedImage = $(imageForClaim).attr("src", resourcePath).load(function() {
+		$(resourceSelector).first().replaceWith(loadedImage);
+	});
+
+	return imageForClaim;
 }
 
 // function resetImages() {
@@ -274,13 +283,34 @@ function determineClaimVertical(columnIndex, rowIndex)
 function determineClaim(direction, columnIndex, rowIndex) {
 	var maxHorizontalLines = horizontalLinesClaimed[0].length;
 	var maxVerticalLines = verticalLinesClaimed[0].length;
+	var boxClaimed = false;
 
 	if (
-		direction == HORIZONTALLY
+		direction == HORIZONTAL
 	) {
-		return determineClaimHorizontal(columnIndex, rowIndex);
+		boxClaimed = determineClaimHorizontal(columnIndex, rowIndex);
 	}
-	return determineClaimVertical(columnIndex, rowIndex);
+
+	if (
+		(direction == HORIZONTAL)
+		&& boxClaimed == false
+		&& columnIndex > 0
+	) {
+		console.log("secondary column check");
+		return determineClaimHorizontal(columnIndex - 1, rowIndex);
+	} else if (direction == HORIZONTAL) {
+		console.log("checking box");
+		return boxClaimed;
+	}
+
+
+	boxClaimed = determineClaimVertical(columnIndex, rowIndex);
+
+	if (boxClaimed == false && rowIndex > 0) {
+		console.log("secondary row check");
+		return determineClaimVertical(columnIndex - 1, rowIndex);
+	}
+	return boxClaimed;
 }
 
 
@@ -309,7 +339,7 @@ function connectDots(direction, columnIndex, rowIndex) {
 function run(direction, columnIndex, rowIndex) {
 	var validMove = false;
 
-	if (direction == HORIZONTALLY) {
+	if (direction == HORIZONTAL) {
 		validMove = claim(
 			markerForCurrentPlayer,
 			horizontalLinesClaimed,
@@ -329,6 +359,8 @@ function run(direction, columnIndex, rowIndex) {
 		console.log("invalid move")
 		return 0;
 	}
+
+	console.log(visuallyMarkClaim(1, direction, columnIndex, rowIndex))
 
 	console.log(determineClaim(direction, columnIndex, rowIndex))
 
