@@ -3,7 +3,7 @@ var PLAYER_ONE_MARKER = 1;
 var PLAYER_TWO_MARKER = 2;
 var GAME_GRID_COLUMNS = 4;
 var GAME_GRID_ROWS = 4;
-var LINE_OFFSET = 1;
+var LINE_OFFSET = 2;
 var HORIZONTAL = "HORIZONTAL";
 var VERTICAL = "VERTICAL";
 var boxesClaimed = [];
@@ -80,8 +80,8 @@ function createArray(numberOfColumns, numberOfRows) {
 //==========================================================
 function startGame() {
 	boxesClaimed = createArray(
-		GAME_GRID_ROWS,
-		GAME_GRID_COLUMNS
+		GAME_GRID_ROWS + LINE_OFFSET,
+		GAME_GRID_COLUMNS + LINE_OFFSET
 	);
 }
 
@@ -115,39 +115,62 @@ function visuallyMarkClaim(playerMarker, claimType, columnIndex, rowIndex) {
 	return imageForClaim;
 }
 
-function markBoxes(lineOrientation, xLineCoordinate, yLineCoordinate)
+function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 {
+	if (boxesClaimed[xLineCoordinate][yLineCoordinate].indexOf(side) > -1) {
+		return true;
+	}
+	return false;
+}
 
+function claimBoxes(lineOrientation, xLineCoordinate, yLineCoordinate)
+{
+	var boxClaimed = false;
+	var selectedBoxClaims = "";
+	var adjacentBoxClaims = "";
+
+
+	if (lineOrientation == HORIZONTAL) {
+		boxClaimed = boxClaimedOn(TOP, xLineCoordinate, yLineCoordinate);
+	} else {
+		boxClaimed = boxClaimedOn(LEFT, xLineCoordinate, yLineCoordinate);
+	}
+
+	if (boxClaimed) {
+		return false
+	}
+
+	if (lineOrientation == HORIZONTAL) {
+		selectedBoxClaims = boxesClaimed[xLineCoordinate][yLineCoordinate];
+		adjacentBoxClaims = boxesClaimed[xLineCoordinate][yLineCoordinate - 1];
+
+		boxesClaimed[xLineCoordinate][yLineCoordinate] = selectedBoxClaims + TOP;
+		boxesClaimed[xLineCoordinate][yLineCoordinate - 1] = adjacentBoxClaims + BOTTOM;
+		return true;
+	}
+
+	selectedBoxClaims = boxesClaimed[xLineCoordinate][yLineCoordinate];
+	adjacentBoxClaims = boxesClaimed[xLineCoordinate - 1][yLineCoordinate];
+
+	boxesClaimed[xLineCoordinate][yLineCoordinate] = selectedBoxClaims + LEFT;
+	boxesClaimed[xLineCoordinate - 1][yLineCoordinate] = adjacentBoxClaims + RIGHT;
+	return true;
 }
 
 function run(lineOrientation, xLineCoordinate, yLineCoordinate) {
-	var validMove = false;
+	var lineClaimed = false;
 	var positionOfBoxClaimed = false;
 	var yes = boxesClaimed;
-	// if (lineOrientation == HORIZONTAL) {
-	// 	validMove = markClaims(
-	// 		TOP,
-	// 		boxesClaimed,
-	// 		columnIndex,
-	// 		rowIndex
-	// 	)
-	// } else {
-	// 	validMove = markClaims(
-	// 		LEFT,
-	// 		boxesClaimed,
-	// 		columnIndex,
-	// 		rowIndex
-	// 	)
-	// }
 
-	// if (validMove == false) {
-	// 	console.log("invalid move")
-	// 	return 0;
-	// }
+	lineClaimed = claimBoxes(lineOrientation, xLineCoordinate, yLineCoordinate);
+	if (lineClaimed == false) {
+		console.log("This line is already claimed.")
+		return 0;
+	}
 
 	visuallyMarkClaim(markerForCurrentPlayer, lineOrientation, xLineCoordinate, yLineCoordinate);
 
-	// positionOfBoxClaimed = determineClaim(lineOrientation, columnIndex, rowIndex);
+	// positionOfBoxClaimed = determineBoxOwner(lineOrientation, columnIndex, rowIndex);
 	// if (positionOfBoxClaimed == false) {
 	// 	markerForCurrentPlayer = (markerForCurrentPlayer != PLAYER_ONE_MARKER) ? PLAYER_ONE_MARKER : PLAYER_TWO_MARKER;
 	// } else {
