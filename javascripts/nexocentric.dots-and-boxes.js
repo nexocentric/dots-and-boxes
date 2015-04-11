@@ -135,7 +135,7 @@ function restartGame() {
 
 //just need to convert this for image toggling
 function visuallyMarkClaim(playerMarker, claimType, columnIndex, rowIndex) {
-	var resourceSelector = "." + claimType.toLowerCase() + "-" + columnIndex + "-" + rowIndex;
+	var resourceSelector = "." + claimType.toLowerCase() + "-" + columnIndex + "-" + rowIndex + " > img";
 	var resourcePath = "images/" + playerMarker + "-" + claimType + ".svg";
 	var resourceEvent = "";
 
