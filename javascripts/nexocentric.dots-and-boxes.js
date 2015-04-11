@@ -8,7 +8,7 @@ var HORIZONTALLY = "horizontal";
 var VERTICALLY = "vertical";
 var verticalLinesClaimed = [];
 var horizontalLinesClaimed = [];
-var squaresClaimed = [];
+var boxesClaimed = [];
 var turnsTaken = 0;
 var markerForCurrentPlayer = PLAYER_ONE_MARKER;
 
@@ -121,7 +121,7 @@ function resetGameCounters() {
 		GAME_GRID_ROWS + LINE_OFFSET,
 		GAME_GRID_COLUMNS
 	);
-	squaresClaimed = createArray(
+	boxesClaimed = createArray(
 		GAME_GRID_ROWS,
 		GAME_GRID_COLUMNS
 	);
@@ -161,62 +161,133 @@ function replaceImage(imagePath, uploadTimestamp, jqueryObject, photoWidth, phot
 	}
 }
 
-function resetImages() {
+// function resetImages() {
 
-}
+// }
 
-function resetGame() {
+// function resetGame() {
 
-}
+// }
 
-function gameFinished(playerOneScore, playerTwoScore) {
+// function gameFinished(playerOneScore, playerTwoScore) {
 
-}
+// }
 
-function displayWinner(playerMarker) {
+// function displayWinner(playerMarker) {
 
-}
+// }
 
-function checkHorizontalClaims()
+function determineClaimHorizontal(columnIndex, rowIndex)
 {
-	
-}
-
-function checkVerticalClaims()
-{
-	
-}
-
-function determineClaim(direction, columnIndex, rowIndex) {
 	var maxHorizontalLines = horizontalLinesClaimed[0].length;
 	var maxVerticalLines = verticalLinesClaimed[0].length;
 	var topClaimed = false;
 	var bottomClaimed = false;
 	var leftClaimed = false;
-	var rightClamed = false;
-	
-	if (==) {
-		topClaimed = true;
+	var rightClaimed = false;
+
+	//when horizontal bar = (columnIndex + 1) == maxHorizontalLines
+	//set right claimed
+	//subtract one from column index
+	if ((columnIndex + 1) == maxHorizontalLines) {
+		columnIndex--;
 	}
 
-	if (==) {
-		bottomClaimed = true;
-	}
-
-	if (==) {
+	if (
+		horizontalLinesClaimed[rowIndex][columnIndex] != NEUTRAL_MARKER
+	) {
 		leftClaimed = true;
 	}
 
-	if (==) {
-		rightClaimed = true;
+	if (
+		horizontalLinesClaimed[rowIndex][columnIndex + 1] != NEUTRAL_MARKER
+	) {
+		rightClaimed = true;	
 	}
+
+	if (
+		verticalLinesClaimed[rowIndex][columnIndex] != NEUTRAL_MARKER
+	) {
+		topClaimed = true;
+	}
+
+	if (
+		verticalLinesClaimed[rowIndex + 1][columnIndex] != NEUTRAL_MARKER
+	) {
+		bottomClaimed = true;
+	}
+
+
+	if (topClaimed && bottomClaimed && leftClaimed && rightClaimed) {
+		return true;
+	}
+	return false;
+}
+
+function determineClaimVertical(columnIndex, rowIndex)
+{
+	var maxHorizontalLines = horizontalLinesClaimed[0].length;
+	var maxVerticalLines = verticalLinesClaimed[0].length;
+	var topClaimed = false;
+	var bottomClaimed = false;
+	var leftClaimed = false;
+	var rightClaimed = false;
+
+	//when horizontal bar = (columnIndex + 1) == maxHorizontalLines
+	//set right claimed
+	//subtract one from column index
+	if ((rowIndex + 1) == maxVerticalLines) {
+		rowIndex--;
+	}
+
+	if (
+		horizontalLinesClaimed[rowIndex][columnIndex] != NEUTRAL_MARKER
+	) {
+		leftClaimed = true;
+	}
+
+	if (
+		horizontalLinesClaimed[rowIndex][columnIndex + 1] != NEUTRAL_MARKER
+	) {
+		rightClaimed = true;	
+	}
+
+	if (
+		verticalLinesClaimed[rowIndex][columnIndex] != NEUTRAL_MARKER
+	) {
+		topClaimed = true;
+	}
+
+	if (
+		verticalLinesClaimed[rowIndex + 1][columnIndex] != NEUTRAL_MARKER
+	) {
+		bottomClaimed = true;
+	}
+
+
+	if (topClaimed && bottomClaimed && leftClaimed && rightClaimed) {
+		return true;
+	}
+	return false;
+}
+
+function determineClaim(direction, columnIndex, rowIndex) {
+	var maxHorizontalLines = horizontalLinesClaimed[0].length;
+	var maxVerticalLines = verticalLinesClaimed[0].length;
+
+	if (
+		direction == HORIZONTALLY
+	) {
+		return determineClaimHorizontal(columnIndex, rowIndex);
+	}
+	return determineClaimVertical(columnIndex, rowIndex);
 }
 
 
-function boxClaimed(direction, columnIndex, rowIndex) {
+// function boxClaimed(direction, columnIndex, rowIndex) {
 
-	return playerMarker;
-}
+// 	return playerMarker;
+// }
 
 //==========================================================
 // [author]
@@ -255,12 +326,13 @@ function run(direction, columnIndex, rowIndex) {
 	}
 
 	if (validMove == false) {
+		console.log("invalid move")
 		return 0;
 	}
 
+	console.log(determineClaim(direction, columnIndex, rowIndex))
 
-
-	alert(validMove)
+	console.log("valid move")
 	return 1;
 }
 
