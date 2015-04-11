@@ -123,21 +123,21 @@ function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 	return false;
 }
 
-function claimBoxes(lineOrientation, xLineCoordinate, yLineCoordinate)
+function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 {
-	var boxClaimed = false;
+	var sideClaimed = false;
 	var selectedBoxClaims = "";
 	var adjacentBoxClaims = "";
 
 
 	if (lineOrientation == HORIZONTAL) {
-		boxClaimed = boxClaimedOn(TOP, xLineCoordinate, yLineCoordinate);
+		sideClaimed = boxClaimedOn(TOP, xLineCoordinate, yLineCoordinate);
 	} else {
-		boxClaimed = boxClaimedOn(LEFT, xLineCoordinate, yLineCoordinate);
+		sideClaimed = boxClaimedOn(LEFT, xLineCoordinate, yLineCoordinate);
 	}
 
-	if (boxClaimed) {
-		return false
+	if (sideClaimed) {
+		return true;
 	}
 
 	if (lineOrientation == HORIZONTAL) {
@@ -146,7 +146,7 @@ function claimBoxes(lineOrientation, xLineCoordinate, yLineCoordinate)
 
 		boxesClaimed[xLineCoordinate][yLineCoordinate] = selectedBoxClaims + TOP;
 		boxesClaimed[xLineCoordinate][yLineCoordinate - 1] = adjacentBoxClaims + BOTTOM;
-		return true;
+		return false;
 	}
 
 	selectedBoxClaims = boxesClaimed[xLineCoordinate][yLineCoordinate];
@@ -154,30 +154,61 @@ function claimBoxes(lineOrientation, xLineCoordinate, yLineCoordinate)
 
 	boxesClaimed[xLineCoordinate][yLineCoordinate] = selectedBoxClaims + LEFT;
 	boxesClaimed[xLineCoordinate - 1][yLineCoordinate] = adjacentBoxClaims + RIGHT;
-	return true;
+	return false;
+}
+
+function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
+{
+	var topClaimed = boxClaimedOn(TOP, xBoxCoordinate, yBoxCoordinate);
+	var bottomClaimed = boxClaimedOn(BOTTOM, xBoxCoordinate, yBoxCoordinate);
+	var leftClaimed = boxClaimedOn(LEFT, xBoxCoordinate, yBoxCoordinate);
+	var rightClaimed = boxClaimedOn(RIGHT, xBoxCoordinate, yBoxCoordinate);
+	var topAdjacent = 0;
+	var leftAdjacent = 0;
+
+	if (topClaimed && bottomClaimed && leftClaimed && rightClaimed) {
+		console.log("This box has an owner!!");
+		return [xBoxCoordinate, yBoxCoordinate];
+	}
+
+	if (lineOrientation == HORIZONTAL) {
+		yBoxCoordinate--;
+	} else {
+		xBoxCoordinate--;
+	}
+
+	topClaimed = boxClaimedOn(TOP, xBoxCoordinate, yBoxCoordinate);
+	bottomClaimed = boxClaimedOn(BOTTOM, xBoxCoordinate, yBoxCoordinate);
+	leftClaimed = boxClaimedOn(LEFT, xBoxCoordinate, yBoxCoordinate);
+	rightClaimed = boxClaimedOn(RIGHT, xBoxCoordinate, yBoxCoordinate);
+	if (topClaimed && bottomClaimed && leftClaimed && rightClaimed) {
+		console.log("This box has an owner!!");
+		return [xBoxCoordinate, yBoxCoordinate];
+	}
+	return false;
 }
 
 function run(lineOrientation, xLineCoordinate, yLineCoordinate) {
-	var lineClaimed = false;
+	var sideClaimed = false;
 	var positionOfBoxClaimed = false;
 	var yes = boxesClaimed;
 
-	lineClaimed = claimBoxes(lineOrientation, xLineCoordinate, yLineCoordinate);
-	if (lineClaimed == false) {
-		console.log("This line is already claimed.")
+	sideClaimed = claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate);
+	if (sideClaimed) {
+		console.log("This line is already claimed.");
 		return 0;
 	}
 
 	visuallyMarkClaim(markerForCurrentPlayer, lineOrientation, xLineCoordinate, yLineCoordinate);
 
-	// positionOfBoxClaimed = determineBoxOwner(lineOrientation, columnIndex, rowIndex);
-	// if (positionOfBoxClaimed == false) {
-	// 	markerForCurrentPlayer = (markerForCurrentPlayer != PLAYER_ONE_MARKER) ? PLAYER_ONE_MARKER : PLAYER_TWO_MARKER;
-	// } else {
-	// 	visuallyMarkClaim(markerForCurrentPlayer, "box", positionOfBoxClaimed[0], positionOfBoxClaimed[1]);
-	// }
+	positionOfBoxClaimed = determineBoxOwner(lineOrientation, xLineCoordinate, yLineCoordinate);
+	if (positionOfBoxClaimed == false) {
+		markerForCurrentPlayer = (markerForCurrentPlayer != PLAYER_ONE_MARKER) ? PLAYER_ONE_MARKER : PLAYER_TWO_MARKER;
+	} else {
+		visuallyMarkClaim(markerForCurrentPlayer, "box", positionOfBoxClaimed[0], positionOfBoxClaimed[1]);
+	}
 
-	//console.log("valid move");
+	console.log("valid move");
 	return 1;
 }
 
