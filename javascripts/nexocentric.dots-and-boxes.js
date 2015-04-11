@@ -1,3 +1,8 @@
+
+
+//----------------------------------------------------------
+// script globals
+//----------------------------------------------------------
 var NEUTRAL_MARKER = 0;
 var PLAYER_ONE_MARKER = 1;
 var PLAYER_TWO_MARKER = 2;
@@ -28,8 +33,13 @@ var scoreKeeper = [0, 0, 0];
 // [return]
 // 1) a newly created array
 //==========================================================
-function createArray(numberOfColumns, numberOfRows) {
+function createArray(numberOfColumns, numberOfRows)
+{
+	//--------------------------------------
+	// declarations
+	//--------------------------------------
 	var createdArray = [];
+
 	//--------------------------------------
 	// initializations
 	//--------------------------------------
@@ -43,10 +53,10 @@ function createArray(numberOfColumns, numberOfRows) {
 		createdArray = new Array(numberOfColumns);
 
 		//--------------------------------------
-		// if only columns were specified
+		// create a single dimensional array
 		//--------------------------------------
 		for (var column = 0; column < numberOfColumns; column++) {
-			createdArray[column] = NEUTRAL_MARKER;
+			createdArray[column] = "" + NEUTRAL_MARKER;
 		}
 
 		return createdArray;
@@ -55,16 +65,18 @@ function createArray(numberOfColumns, numberOfRows) {
 	}
 
 	//--------------------------------------
-	// if only
+	// create a multidimensional array and
+	// initialize it
 	//--------------------------------------
 	for (var newRow = 0; newRow < numberOfRows; newRow++) {
 		//--------------------------------------
-		// if only columns were specified
+		// add columns to the row created
 		//--------------------------------------
 		createdArray[newRow] = new Array(numberOfColumns);
 
+		//initialized
 		for (var newColumn = 0; newColumn < numberOfColumns; newColumn++) {
-			createdArray[newRow][newColumn] = NEUTRAL_MARKER + "|";
+			createdArray[newRow][newColumn] = "" + NEUTRAL_MARKER;
 		}
 	}
 	return createdArray;
@@ -74,60 +86,74 @@ function createArray(numberOfColumns, numberOfRows) {
 // [author]
 // Dodzi Y. Dzakuma
 // [summary]
-// 
+// Initializes the the array used for tracking boxes claimed
+// on the grid.
 // [parameters]
 // none
 // [return]
 // none
 //==========================================================
-function startGame() {
-	boxesClaimed = createArray(
-		GAME_GRID_ROWS + BOX_OFFSET,
-		GAME_GRID_COLUMNS + BOX_OFFSET
-	);
+function alertPlayer(playerToAlert)
+{
+	alert("Go ahead player " + playerToAlert + "!");
 }
 
 //==========================================================
 // [author]
 // Dodzi Y. Dzakuma
 // [summary]
-// 
+// Initializes the the array used for tracking boxes claimed
+// on the grid.
 // [parameters]
 // none
 // [return]
 // none
 //==========================================================
-function visuallyMarkClaim(playerMarker, claimType, columnIndex, rowIndex) {
-	if (columnIndex == -1 || rowIndex == -1) {
+function startGame()
+{
+	boxesClaimed = createArray(
+		GAME_GRID_ROWS + BOX_OFFSET,
+		GAME_GRID_COLUMNS + BOX_OFFSET
+	);
+	alertPlayer(PLAYER_ONE_MARKER);
+}
+
+//==========================================================
+// [author]
+// Dodzi Y. Dzakuma
+// [summary]
+// Dynamically loads an image to be used to mark an action
+// on the board.
+// [parameters]
+// 1) a marker used to determine which player made the move
+// 2) the type of resource to use (line|box)
+// 3) the x coordinate of the resource to replace
+// 4) the y coordinate of the resource to replace
+// [return]
+// 1) a path to the resource if coordinates are valid
+// 2) a blank string if the resource coordinates are invalid
+//==========================================================
+function replaceResource(playerMarker, resourceType, xCoordinate, yCoordinate) {
+	//--------------------------------------
+	// safety check
+	//--------------------------------------
+	if (xCoordinate == -1 || yCoordinate == -1) {
 		return "";
 	}
 
-	var resourceSelector = "." + claimType.toLowerCase() + "-" + columnIndex + "-" + rowIndex + " > img";
-	var resourcePath = "images/" + playerMarker + "-" + claimType + ".svg";
-	var resourceEvent = "";
+	//--------------------------------------
+	// initializations
+	//--------------------------------------
+	var resourceSelector = "." + resourceType.toLowerCase() + "-" + xCoordinate + "-" + yCoordinate + " > img";
+	var resourcePath = "images/" + playerMarker + "-" + resourceType + ".svg";
+	var tagToReplace = "<img>";
 
-	// switch (claimType) {
-	// 	case HORIZONTAL:
-	// 		resourceEvent = " onclick='turnsTaken += run(" + HORIZONTAL + ", " + columnIndex + ", " + rowIndex + ");'";
-	// 		break;
-	// 	case VERTICAL:
-	// 		resourceEvent = " onclick='turnsTaken += run(" + VERTICAL + ", " + columnIndex + ", " + rowIndex + ");'";
-	// 		break;
-	// 	default:
-	// 		resourceEvent = "";
-	// 		break;
-	// }
-	var imageForClaim = "<img" + resourceEvent + ">";
-
-	// console.log("resourceSelector :" + resourceSelector);
-	// console.log("resourcePath :" + resourcePath);
-	// console.log("resourceEvent :" + resourceEvent);
-	// console.log("newImageTag :" + imageForClaim);
-
-	var loadedImage = $(imageForClaim).attr("src", resourcePath).load(function() {
+	//--------------------------------------
+	// replace the image
+	//--------------------------------------
+	var loadedImage = $(tagToReplace).attr("src", resourcePath).load(function() {
 		$(resourceSelector).first().replaceWith(loadedImage);
 	});
-
 	return resourcePath;
 }
 
@@ -135,11 +161,14 @@ function visuallyMarkClaim(playerMarker, claimType, columnIndex, rowIndex) {
 // [author]
 // Dodzi Y. Dzakuma
 // [summary]
-// 
+// Checks a side of a grid box to check if it has been taken
+// by a player.
 // [parameters]
-// none
+// 1) the side of the box to check
+// 2) the column of the box
+// 3) the row of the box
 // [return]
-// none
+// 1) true if claimed false otherwise
 //==========================================================
 function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 {
@@ -153,41 +182,73 @@ function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 // [author]
 // Dodzi Y. Dzakuma
 // [summary]
-// 
+// Attempts to claim a side of the box selected.
 // [parameters]
-// none
+// 1) the orientation of the line selected
+// 2) the column of the box
+// 3) the row of the box
 // [return]
-// none
+// 1) true if the line was already claimed
+// 2) false if was previously unclaimed
 //==========================================================
 function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 {
+	//--------------------------------------
+	// declarations
+	//--------------------------------------
 	var sideClaimed = false;
 	var selectedBoxClaims = "";
 	var adjacentBoxClaims = "";
 
-
+	//--------------------------------------
+	// use the orientation of the line
+	// selected to perform the check
+	//--------------------------------------
 	if (lineOrientation == HORIZONTAL) {
 		sideClaimed = boxClaimedOn(TOP, xLineCoordinate, yLineCoordinate);
 	} else {
 		sideClaimed = boxClaimedOn(LEFT, xLineCoordinate, yLineCoordinate);
 	}
 
+	//--------------------------------------
+	// side was already claimed
+	//--------------------------------------
 	if (sideClaimed) {
 		return true;
 	}
 
+	//--------------------------------------
+	// if left side was unclaimed
+	//--------------------------------------
 	if (lineOrientation == HORIZONTAL) {
+		//--------------------------------------
+		// extract the current claims from the
+		// selected box and its vertically
+		// adjacent box
+		//--------------------------------------
 		selectedBoxClaims = boxesClaimed[xLineCoordinate][yLineCoordinate];
 		adjacentBoxClaims = boxesClaimed[xLineCoordinate][yLineCoordinate - 1];
 
+		//--------------------------------------
+		// append the new claims to the selected
+		// boxes
+		//--------------------------------------
 		boxesClaimed[xLineCoordinate][yLineCoordinate] = selectedBoxClaims + TOP;
 		boxesClaimed[xLineCoordinate][yLineCoordinate - 1] = adjacentBoxClaims + BOTTOM;
 		return false;
 	}
 
+	//--------------------------------------
+	// extract the current claims from the
+	// selected box and its horizontally
+	// adjacent box
+	//--------------------------------------
 	selectedBoxClaims = boxesClaimed[xLineCoordinate][yLineCoordinate];
 	adjacentBoxClaims = boxesClaimed[xLineCoordinate - 1][yLineCoordinate];
-
+	
+	//--------------------------------------
+	// append new clainms to both boxes
+	//--------------------------------------
 	boxesClaimed[xLineCoordinate][yLineCoordinate] = selectedBoxClaims + LEFT;
 	boxesClaimed[xLineCoordinate - 1][yLineCoordinate] = adjacentBoxClaims + RIGHT;
 	return false;
@@ -197,42 +258,75 @@ function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 // [author]
 // Dodzi Y. Dzakuma
 // [summary]
-// 
+// Used to determine the owner of the box selected. This 
+// also checks adjacent boxes just in case the line selected
+// closes an adjacent box instead of the one selected.
 // [parameters]
-// none
+// 1) the orientation of the line
+// 2) the column of the box
+// 3) the row of the box
 // [return]
-// none
+// 1) a one dimensional array of coordinates for the box
+//    that was selected and an adjacent box based on line
+//    orientation [box1x, box1y, box2x, box2y]
 //==========================================================
 function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
 {
-	var topClaimed = boxClaimedOn(TOP, xBoxCoordinate, yBoxCoordinate);
-	var bottomClaimed = boxClaimedOn(BOTTOM, xBoxCoordinate, yBoxCoordinate);
-	var leftClaimed = boxClaimedOn(LEFT, xBoxCoordinate, yBoxCoordinate);
-	var rightClaimed = boxClaimedOn(RIGHT, xBoxCoordinate, yBoxCoordinate);
+	//--------------------------------------
+	// declarations
+	//--------------------------------------
+	var topClaimed = false;
+	var bottomClaimed = false;
+	var leftClaimed = false;
+	var rightClaimed = false;
 	var topAdjacent = 0;
 	var leftAdjacent = 0;
 	var boxCoordinates = [-1, -1];
 	var adjacentBoxCoodinates = [-1, -1];
 
+	//--------------------------------------
+	// check the selected box first
+	//--------------------------------------
+	topClaimed = boxClaimedOn(TOP, xBoxCoordinate, yBoxCoordinate);
+	bottomClaimed = boxClaimedOn(BOTTOM, xBoxCoordinate, yBoxCoordinate);
+	leftClaimed = boxClaimedOn(LEFT, xBoxCoordinate, yBoxCoordinate);
+	rightClaimed = boxClaimedOn(RIGHT, xBoxCoordinate, yBoxCoordinate);
+
+	//--------------------------------------
+	// if all sides are claimed return the
+	// coordinates of the box
+	//--------------------------------------
 	if (topClaimed && bottomClaimed && leftClaimed && rightClaimed) {
-		//console.log("This box has an owner!!");
 		boxCoordinates = [xBoxCoordinate, yBoxCoordinate];
 	}
 
+	//--------------------------------------
+	// select an adjacent box by negative
+	// offset based on line orientation
+	//--------------------------------------
 	if (lineOrientation == HORIZONTAL) {
 		yBoxCoordinate--;
 	} else {
 		xBoxCoordinate--;
 	}
 
+	//--------------------------------------
+	// check adjacent box for claimed sides
+	//--------------------------------------
 	topClaimed = boxClaimedOn(TOP, xBoxCoordinate, yBoxCoordinate);
 	bottomClaimed = boxClaimedOn(BOTTOM, xBoxCoordinate, yBoxCoordinate);
 	leftClaimed = boxClaimedOn(LEFT, xBoxCoordinate, yBoxCoordinate);
 	rightClaimed = boxClaimedOn(RIGHT, xBoxCoordinate, yBoxCoordinate);
+
+	//--------------------------------------
+	// if all sides are claimed return the
+	// coordinates of the adjacent box
+	//--------------------------------------
 	if (topClaimed && bottomClaimed && leftClaimed && rightClaimed) {
-		//console.log("This box has an owner!!");
 		adjacentBoxCoodinates = [xBoxCoordinate, yBoxCoordinate];
 	}
+
+	//combine both coordinates for use
 	return boxCoordinates.concat(adjacentBoxCoodinates);
 }
 
@@ -240,13 +334,23 @@ function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
 // [author]
 // Dodzi Y. Dzakuma
 // [summary]
-// 
+// This function is run when a line is clicked. It takes the
+// coordinates of the selected resource and calculates if 
+// the selection of that line will cause a player to claim
+// boxes on the grid.
 // [parameters]
-// none
+// 1) the orientation of the line that was clicked
+// 2) the column of the selected line
+// 3) the row of the selected line
 // [return]
-// none
+// 1) one if the move made by the player was allowed
+// 2) zero if the move is not allowed
 //==========================================================
-function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate) {
+function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate)
+{
+	//--------------------------------------
+	// declarations
+	//--------------------------------------
 	var sideClaimed = false;
 	var positionOfBoxClaimed = false;
 	var pointsAwarded = 0;
@@ -255,49 +359,80 @@ function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate) {
 	var finishedMessage = "";
 
 
-	console.log(turnsTaken);
+	//--------------------------------------
+	// attempt to claim a side of the box
+	//--------------------------------------
 	sideClaimed = claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate);
 	if (sideClaimed) {
-		//console.log("This line is already claimed.");
 		return 0;
 	}
 
-	visuallyMarkClaim(markerForCurrentPlayer, lineOrientation, xLineCoordinate, yLineCoordinate);
+	//--------------------------------------
+	// replace the line image with an image
+	// representing the player who played
+	// this turn
+	//--------------------------------------
+	replaceResource(markerForCurrentPlayer, lineOrientation, xLineCoordinate, yLineCoordinate);
 
+	//--------------------------------------
+	// check the box and an adjacent box to
+	// see if the player could claim it
+	//--------------------------------------
 	positionOfBoxClaimed = determineBoxOwner(lineOrientation, xLineCoordinate, yLineCoordinate);
-	
-	if (visuallyMarkClaim(markerForCurrentPlayer, "box", positionOfBoxClaimed[0], positionOfBoxClaimed[1])) {
+	if (replaceResource(markerForCurrentPlayer, "box", positionOfBoxClaimed[0], positionOfBoxClaimed[1])) {
+		//points for the selected box
 		pointsAwarded++;
 	}
-	if (visuallyMarkClaim(markerForCurrentPlayer, "box", positionOfBoxClaimed[2], positionOfBoxClaimed[3])) {
+	if (replaceResource(markerForCurrentPlayer, "box", positionOfBoxClaimed[2], positionOfBoxClaimed[3])) {
+		//points for the adjacent box
 		pointsAwarded++;
 	}
 
+	//--------------------------------------
+	// if no points were awarded it the next
+	// player's turn otherwise the current
+	// player gets another turn
+	//--------------------------------------
 	if (!pointsAwarded) {
+		//next player
 		markerForCurrentPlayer = (markerForCurrentPlayer != PLAYER_ONE_MARKER) ? PLAYER_ONE_MARKER : PLAYER_TWO_MARKER;
 	} else {
+		//add the points to the players tally and they
 		scoreKeeper[markerForCurrentPlayer] += pointsAwarded;
 		console.log(scoreKeeper[markerForCurrentPlayer])
 	}
 
+	//--------------------------------------
+	// get the scores to determine when the
+	// game ends
+	//--------------------------------------
 	playerOneScore = scoreKeeper[PLAYER_ONE_MARKER];
 	playerTwoScore = scoreKeeper[PLAYER_TWO_MARKER];
 
+	//--------------------------------------
+	// check the end condition for the game
+	//--------------------------------------
 	if ((playerOneScore + playerTwoScore) == TOTAL_BOXES_AVAILABLE) {
+		//--------------------------------------
+		// set message for displaying a winner
+		//--------------------------------------
 		if (playerOneScore > playerTwoScore) {
 			finishedMessage = "Player One Wins!";
-			return 1;
 		} else if (playerOneScore < playerTwoScore) {
 			finishedMessage = "Player Two Wins!";
-			return 1;
 		}
 		finishedMessage = "Tie Game!";
 
+		//--------------------------------------
+		// display the message and ask if they
+		// want to play another round
+		//--------------------------------------
 		if (confirm(finishedMessage + "\n\nWould you like to play again?")) {
 			window.location.reload(true);
 		}
 	}
-	//console.log("valid move");
+
+	alertPlayer(markerForCurrentPlayer);
 	return 1;
 }
 
