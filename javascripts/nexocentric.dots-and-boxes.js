@@ -157,12 +157,6 @@ function visuallyMarkClaim(playerMarker, claimType, columnIndex, rowIndex) {
 	console.log("resourceEvent :" + resourceEvent);
 	console.log("newImageTag :" + imageForClaim);
 
-
-	// var loadedImage = $(imageForClaim).attr('src', resourcePath).load(function() {
-	// 		$(resourceSelector).first().replaceWith(loadedImage);
-	// 	}
-	// });
-
 	var loadedImage = $(imageForClaim).attr("src", resourcePath).load(function() {
 		$(resourceSelector).first().replaceWith(loadedImage);
 	});
@@ -360,11 +354,13 @@ function run(direction, columnIndex, rowIndex) {
 		return 0;
 	}
 
-	console.log(visuallyMarkClaim(1, direction, columnIndex, rowIndex))
+	visuallyMarkClaim(markerForCurrentPlayer, direction, columnIndex, rowIndex);
 
-	console.log(determineClaim(direction, columnIndex, rowIndex))
+	if (determineClaim(direction, columnIndex, rowIndex) == false) {
+		markerForCurrentPlayer = (markerForCurrentPlayer != PLAYER_ONE_MARKER) ? PLAYER_ONE_MARKER : PLAYER_TWO_MARKER;
+	}
 
-	console.log("valid move")
+	console.log("valid move");
 	return 1;
 }
 
