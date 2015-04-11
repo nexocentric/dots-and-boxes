@@ -3,19 +3,18 @@ var PLAYER_ONE_MARKER = 1;
 var PLAYER_TWO_MARKER = 2;
 var GAME_GRID_COLUMNS = 4;
 var GAME_GRID_ROWS = 4;
+var TOTAL_BOXES_AVAILABLE = GAME_GRID_COLUMNS * GAME_GRID_ROWS;
 var BOX_OFFSET = 2;
-var LINE_OFFSET = 1;
-var BOARD_WIDTH = GAME_GRID_COLUMNS + LINE_OFFSET;
-var BOARD_HEIGHT = GAME_GRID_ROWS + LINE_OFFSET;
 var HORIZONTAL = "HORIZONTAL";
 var VERTICAL = "VERTICAL";
 var boxesClaimed = [];
-var turnsTaken = 1; //because i'm incrementing this after running the run function
+var turnsTaken = 0;
 var markerForCurrentPlayer = PLAYER_ONE_MARKER;
 var TOP = "T";
 var BOTTOM = "B";
 var LEFT = "L";
 var RIGHT = "R";
+var scoreKeeper = [0, 0, 0];
 
 //==========================================================
 // [author]
@@ -88,6 +87,16 @@ function startGame() {
 	);
 }
 
+//==========================================================
+// [author]
+// Dodzi Y. Dzakuma
+// [summary]
+// 
+// [parameters]
+// none
+// [return]
+// none
+//==========================================================
 function visuallyMarkClaim(playerMarker, claimType, columnIndex, rowIndex) {
 	if (columnIndex == -1 || rowIndex == -1) {
 		return "";
@@ -122,6 +131,16 @@ function visuallyMarkClaim(playerMarker, claimType, columnIndex, rowIndex) {
 	return resourcePath;
 }
 
+//==========================================================
+// [author]
+// Dodzi Y. Dzakuma
+// [summary]
+// 
+// [parameters]
+// none
+// [return]
+// none
+//==========================================================
 function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 {
 	if (boxesClaimed[xLineCoordinate][yLineCoordinate].indexOf(side) > -1) {
@@ -130,6 +149,16 @@ function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 	return false;
 }
 
+//==========================================================
+// [author]
+// Dodzi Y. Dzakuma
+// [summary]
+// 
+// [parameters]
+// none
+// [return]
+// none
+//==========================================================
 function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 {
 	var sideClaimed = false;
@@ -164,6 +193,16 @@ function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 	return false;
 }
 
+//==========================================================
+// [author]
+// Dodzi Y. Dzakuma
+// [summary]
+// 
+// [parameters]
+// none
+// [return]
+// none
+//==========================================================
 function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
 {
 	var topClaimed = boxClaimedOn(TOP, xBoxCoordinate, yBoxCoordinate);
@@ -197,10 +236,24 @@ function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
 	return boxCoordinates.concat(adjacentBoxCoodinates);
 }
 
-function run(lineOrientation, xLineCoordinate, yLineCoordinate) {
+//==========================================================
+// [author]
+// Dodzi Y. Dzakuma
+// [summary]
+// 
+// [parameters]
+// none
+// [return]
+// none
+//==========================================================
+function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate) {
 	var sideClaimed = false;
 	var positionOfBoxClaimed = false;
-	var yes = "";
+	var pointsAwarded = 0;
+	var playerOneScore = 0;
+	var playerTwoScore = 0;
+	var finishedMessage = "";
+
 
 	console.log(turnsTaken);
 	sideClaimed = claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate);
@@ -213,16 +266,36 @@ function run(lineOrientation, xLineCoordinate, yLineCoordinate) {
 
 	positionOfBoxClaimed = determineBoxOwner(lineOrientation, xLineCoordinate, yLineCoordinate);
 	
-	yes = visuallyMarkClaim(markerForCurrentPlayer, "box", positionOfBoxClaimed[0], positionOfBoxClaimed[1]);
-	visuallyMarkClaim(markerForCurrentPlayer, "box", positionOfBoxClaimed[2], positionOfBoxClaimed[3]);
-
-	if (!yes) {
-		markerForCurrentPlayer = (markerForCurrentPlayer != PLAYER_ONE_MARKER) ? PLAYER_ONE_MARKER : PLAYER_TWO_MARKER;
+	if (visuallyMarkClaim(markerForCurrentPlayer, "box", positionOfBoxClaimed[0], positionOfBoxClaimed[1])) {
+		pointsAwarded++;
+	}
+	if (visuallyMarkClaim(markerForCurrentPlayer, "box", positionOfBoxClaimed[2], positionOfBoxClaimed[3])) {
+		pointsAwarded++;
 	}
 
-	console.log("??" + (BOARD_HEIGHT * GAME_GRID_COLUMNS) + (BOARD_WIDTH * GAME_GRID_ROWS))
-	if (turnsTaken == ((BOARD_HEIGHT * GAME_GRID_COLUMNS) + (BOARD_WIDTH * GAME_GRID_ROWS))) {
-		alert("GAME FINISHED!!");
+	if (!pointsAwarded) {
+		markerForCurrentPlayer = (markerForCurrentPlayer != PLAYER_ONE_MARKER) ? PLAYER_ONE_MARKER : PLAYER_TWO_MARKER;
+	} else {
+		scoreKeeper[markerForCurrentPlayer] += pointsAwarded;
+		console.log(scoreKeeper[markerForCurrentPlayer])
+	}
+
+	playerOneScore = scoreKeeper[PLAYER_ONE_MARKER];
+	playerTwoScore = scoreKeeper[PLAYER_TWO_MARKER];
+
+	if ((playerOneScore + playerTwoScore) == TOTAL_BOXES_AVAILABLE) {
+		if (playerOneScore > playerTwoScore) {
+			finishedMessage = "Player One Wins!";
+			return 1;
+		} else if (playerOneScore < playerTwoScore) {
+			finishedMessage = "Player Two Wins!";
+			return 1;
+		}
+		finishedMessage = "Tie Game!";
+
+		if (confirm(finishedMessage + "\n\nWould you like to play again?")) {
+			window.location.reload(true);
+		}
 	}
 	//console.log("valid move");
 	return 1;
