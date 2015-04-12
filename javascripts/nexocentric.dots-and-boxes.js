@@ -1,5 +1,3 @@
-
-
 //----------------------------------------------------------
 // script globals
 //----------------------------------------------------------
@@ -44,13 +42,20 @@ function createArray(numberOfColumns, numberOfRows)
 	//--------------------------------------
 	// initializations
 	//--------------------------------------
-	numberOfColumns = numberOfColumns || 0
-	numberOfRows = numberOfRows || 0
+	numberOfColumns = numberOfColumns || 0;
+	numberOfRows = numberOfRows || 0;
+
+	//--------------------------------------
+	// safety check
+	//--------------------------------------
+	if ((numberOfColumns + numberOfRows) == 0) {
+		return createdArray;
+	}
 
 	//--------------------------------------
 	// if only columns were specified
 	//--------------------------------------
-	if (numberOfRows == 0) {
+	if (numberOfRows == 0 && numberOfColumns > 0) {
 		createdArray = new Array(numberOfColumns);
 
 		//--------------------------------------
@@ -115,11 +120,17 @@ function alertPlayer(playerToAlert)
 //==========================================================
 function startGame()
 {
+	//create the game board based on script parameters
 	boxesClaimed = createArray(
 		GAME_GRID_ROWS + BOX_OFFSET,
 		GAME_GRID_COLUMNS + BOX_OFFSET
 	);
+
+	//show which player's turn it is initially
 	alertPlayer(PLAYER_ONE_MARKER);
+
+	//return the box grid for testing
+	return boxesClaimed;
 }
 
 //==========================================================
