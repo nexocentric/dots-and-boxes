@@ -208,7 +208,7 @@ function replaceResource(playerMarker, resourceType, xCoordinate, yCoordinate) {
 	//--------------------------------------
 	// safety check
 	//--------------------------------------
-	if (xCoordinate < 0 || yCoordinate < 0) {
+	if (!coordinatesWithinRange(xCoordinate, yCoordinate)) {
 		return "";
 	}
 

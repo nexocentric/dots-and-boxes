@@ -70,12 +70,24 @@ QUnit.test("replaceResource function", function(assert) {
 		"", 
 		"Returns a blank string if the x coordinate is less than 0."
 	);
+	returnValue = replaceResource(1, 2, GAME_GRID_COLUMNS + BOX_OFFSET, 1);
+	assert.deepEqual(
+		returnValue, 
+		"", 
+		"Returns a blank string if the x coordinate outside of range."
+	);
 
 	returnValue = replaceResource(1, 2, 1, -1);
 	assert.deepEqual(
 		returnValue, 
 		"", 
 		"Returns a blank string if the y coordinate is less than 0."
+	);
+	returnValue = replaceResource(1, 2, 1, GAME_GRID_ROWS + BOX_OFFSET);
+	assert.deepEqual(
+		returnValue, 
+		"", 
+		"Returns a blank string if the y coordinate outside of range."
 	);
 
 	returnValue = replaceResource(PLAYER_ONE_MARKER, HORIZONTAL, 1, 1);
