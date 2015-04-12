@@ -3,6 +3,7 @@
 //----------------------------------------------------------
 // script globals
 //----------------------------------------------------------
+var TESTING_MODE = false;
 var NEUTRAL_MARKER = 0;
 var PLAYER_ONE_MARKER = 1;
 var PLAYER_TWO_MARKER = 2;
@@ -86,8 +87,7 @@ function createArray(numberOfColumns, numberOfRows)
 // [author]
 // Dodzi Y. Dzakuma
 // [summary]
-// Initializes the the array used for tracking boxes claimed
-// on the grid.
+// Used to notify the players of their respective turns.
 // [parameters]
 // none
 // [return]
@@ -95,6 +95,10 @@ function createArray(numberOfColumns, numberOfRows)
 //==========================================================
 function alertPlayer(playerToAlert)
 {
+	//disable alerts when testing
+	if (TESTING_MODE) {
+		return;
+	}
 	alert("Go ahead player " + playerToAlert + "!");
 }
 
@@ -428,7 +432,9 @@ function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate)
 		// display the message and ask if they
 		// want to play another round
 		//--------------------------------------
-		if (confirm(finishedMessage + "\n\nWould you like to play again?")) {
+		if (
+			TESTING_MODE == false 
+			&& confirm(finishedMessage + "\n\nWould you like to play again?")) {
 			window.location.reload(true);
 		}
 	}
