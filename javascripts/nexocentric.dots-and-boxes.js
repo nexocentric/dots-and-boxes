@@ -153,7 +153,7 @@ function coordinatesWithinRange(xCoordinate, yCoordinate)
 	//--------------------------------------
 	var xCoordinateMax = GAME_GRID_COLUMNS + BOX_OFFSET;
 	var xCoordinateMin = 0;
-	var yCoordinateMax = GAME_GRID_COLUMNS + BOX_OFFSET;
+	var yCoordinateMax = GAME_GRID_ROWS + BOX_OFFSET;
 	var yCoordinateMin = 0;
 	var xWithinRange = false;
 	var yWithinRange = false;
@@ -362,6 +362,7 @@ function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 // 1) a one dimensional array of coordinates for the box
 //    that was selected and an adjacent box based on line
 //    orientation [box1x, box1y, box2x, box2y]
+// 2) -1 if the coordinates are out of range
 //==========================================================
 function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
 {
@@ -376,6 +377,13 @@ function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
 	var leftAdjacent = 0;
 	var boxCoordinates = [-1, -1];
 	var adjacentBoxCoodinates = [-1, -1];
+
+	//--------------------------------------
+	// safety check
+	//--------------------------------------
+	if (!coordinatesWithinRange(xBoxCoordinate, yBoxCoordinate)) {
+		return -1;
+	}
 
 	//--------------------------------------
 	// check the selected box first

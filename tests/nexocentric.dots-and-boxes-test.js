@@ -136,6 +136,7 @@ QUnit.test("coordinatesWithinRange function", function(assert) {
 });
 
 QUnit.test("claimBoxSide function", function(assert) {
+	startGame();
 	var returnValue = claimBoxSide(HORIZONTAL, -1, 0);
 	assert.deepEqual(
 		returnValue,
@@ -165,7 +166,8 @@ QUnit.test("claimBoxSide function", function(assert) {
 	);
 });
 
-QUnit.test("boxClaimedOn function", function(assert) {	
+QUnit.test("boxClaimedOn function", function(assert) {
+	startGame();
 	var returnValue = boxClaimedOn(TOP, GAME_GRID_COLUMNS + BOX_OFFSET, 0);
 	assert.deepEqual(
 		returnValue,
@@ -197,12 +199,73 @@ QUnit.test("boxClaimedOn function", function(assert) {
 });
 
 QUnit.test("determineBoxOwner function", function(assert) {
-	//var returnValue = determineBoxOwner(HORIZON, xBoxCoordinate, yBoxCoordinate);
-	assert.deepEqual(true, true, "not implemented.");
+	startGame();
+	var returnValue = determineBoxOwner(HORIZONTAL, -1, 4);
+	assert.deepEqual(
+		returnValue,
+		-1,
+		"Returns -1 if x coordinate out of range."
+	);
+
+	returnValue = determineBoxOwner(HORIZONTAL, 4, GAME_GRID_ROWS + BOX_OFFSET);
+	assert.deepEqual(
+		returnValue,
+		-1,
+		"Returns -1 if x coordinate out of range."
+	);
+
+	returnValue = determineBoxOwner(HORIZONTAL, 4, 4);
+	assert.deepEqual(returnValue[0], -1, "Current box x coordinate [no claim horizontal].");
+	assert.deepEqual(returnValue[1], -1, "Current box y coordinate [no claim horizontal].");
+	assert.deepEqual(returnValue[2], -1, "Negative offset box x coordinate [no claim horizontal].");
+	assert.deepEqual(returnValue[3], -1, "Negative offset box y coordinate [no claim horizontal].");
+
+	returnValue = determineBoxOwner(VERTICAL, 4, 4);
+	assert.deepEqual(returnValue[0], -1, "Current box x coordinate [no claim vertical].");
+	assert.deepEqual(returnValue[1], -1, "Current box y coordinate [no claim vertical].");
+	assert.deepEqual(returnValue[2], -1, "Negative offset box x coordinate [no claim vertical].");
+	assert.deepEqual(returnValue[3], -1, "Negative offset box y coordinate [no claim vertical].");
+
+	//--------------------------------------
+	// 1 is an offset for negative lookups
+	// on claims see claimBoxSide for more
+	// information
+	//--------------------------------------
+	for (var column = 1; column < GAME_GRID_COLUMNS + BOX_OFFSET; column++) {
+		for (var row = 1; row < GAME_GRID_ROWS + BOX_OFFSET; row++) {
+			if (!coordinatesWithinRange(column, row)) {
+				continue;
+			}
+			claimBoxSide(HORIZONTAL, column, row);
+			claimBoxSide(VERTICAL, column, row);
+		}
+	}
+
+	//--------------------------------------
+	// confirms that will detect if two 
+	// boxes were claimed when a horizontal
+	// line is selected
+	//--------------------------------------
+	returnValue = determineBoxOwner(HORIZONTAL, 4, 4);
+	assert.deepEqual(returnValue[0], 4, "Current box x coordinate [claim horizontal].");
+	assert.deepEqual(returnValue[1], 4, "Current box y coordinate [claim horizontal].");
+	assert.deepEqual(returnValue[2], 4, "Negative offset box x coordinate [claim horizontal].");
+	assert.deepEqual(returnValue[3], 3, "Negative offset box y coordinate [claim horizontal].");
+
+	//--------------------------------------
+	// confirms that will detect if two 
+	// boxes were claimed when a vertical
+	// line is selected
+	//--------------------------------------
+	returnValue = determineBoxOwner(VERTICAL, 4, 4);
+	assert.deepEqual(returnValue[0], 4, "Current box x coordinate [claim vertical].");
+	assert.deepEqual(returnValue[1], 4, "Current box y coordinate [claim vertical].");
+	assert.deepEqual(returnValue[2], 3, "Negative offset box x coordinate [claim vertical].");
+	assert.deepEqual(returnValue[3], 4, "Negative offset box y coordinate [claim vertical].");
 });
 
 QUnit.test("playTurn function", function(assert) {
-	//markerForCurrentPlayer
+	startGame();
 	var returnValue = playTurn(HORIZONTAL, 2, 2);
 	assert.deepEqual(
 		returnValue, 
