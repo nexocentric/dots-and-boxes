@@ -11,6 +11,7 @@ var TOTAL_BOXES_AVAILABLE = GAME_GRID_COLUMNS * GAME_GRID_ROWS;
 var BOX_OFFSET = 2;
 var HORIZONTAL = "HORIZONTAL";
 var VERTICAL = "VERTICAL";
+var IMAGES_FOLDER = "images/";
 var boxesClaimed = [];
 var turnsTaken = 0;
 var markerForCurrentPlayer = PLAYER_ONE_MARKER;
@@ -152,7 +153,7 @@ function replaceResource(playerMarker, resourceType, xCoordinate, yCoordinate) {
 	//--------------------------------------
 	// safety check
 	//--------------------------------------
-	if (xCoordinate == -1 || yCoordinate == -1) {
+	if (xCoordinate < 0 || yCoordinate < 0) {
 		return "";
 	}
 
@@ -160,13 +161,15 @@ function replaceResource(playerMarker, resourceType, xCoordinate, yCoordinate) {
 	// initializations
 	//--------------------------------------
 	var resourceSelector = "." + resourceType.toLowerCase() + "-" + xCoordinate + "-" + yCoordinate + " > img";
-	var resourcePath = "images/" + playerMarker + "-" + resourceType + ".svg";
+	var resourcePath = IMAGES_FOLDER + playerMarker + "-" + resourceType + ".svg";
 	var tagToReplace = "<img>";
-
+	var imageExists = false;
+				
 	//--------------------------------------
 	// replace the image
 	//--------------------------------------
 	var loadedImage = $(tagToReplace).attr("src", resourcePath).load(function() {
+		//image exists replace the image on the board
 		$(resourceSelector).first().replaceWith(loadedImage);
 	});
 	return resourcePath;

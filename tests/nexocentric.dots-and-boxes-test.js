@@ -1,3 +1,6 @@
+TESTING_MODE = true;
+IMAGES_FOLDER = "../images";
+
 //==========================================================
 // [author]
 // Dodzi Y. Dzakuma
@@ -42,25 +45,63 @@ QUnit.test("createArray function", function(assert) {
 });
 
 QUnit.test("startGame function", function(assert) {
-	// function startGame()
+	var generatedGameGrid = startGame();
+	var sizeOfDimension = 0;
+
+	sizeOfDimension = generatedGameGrid.length;
+	assert.deepEqual(
+		sizeOfDimension - GAME_GRID_COLUMNS,
+		BOX_OFFSET,
+		"Width of grid is offset for move tracking."
+	);
+
+	sizeOfDimension = generatedGameGrid[0].length;
+	assert.deepEqual(
+		sizeOfDimension - GAME_GRID_ROWS, 
+		BOX_OFFSET,
+		"Height of grid is offset for move tracking."
+	);
 });
 
 QUnit.test("replaceResource function", function(assert) {
-	// function replaceResource(playerMarker, resourceType, xCoordinate, yCoordinate) {
+	var returnValue = replaceResource(1, 2, -1, 1);
+	assert.deepEqual(
+		returnValue, 
+		"", 
+		"Returns a blank string if the x coordinate is less than 0."
+	);
+
+	returnValue = replaceResource(1, 2, 1, -1);
+	assert.deepEqual(
+		returnValue, 
+		"", 
+		"Returns a blank string if the y coordinate is less than 0."
+	);
+
+	returnValue = replaceResource(PLAYER_ONE_MARKER, HORIZONTAL, 1, 1);
+	assert.deepEqual(
+		(returnValue.length > 0), 
+		true, 
+		"Returns resource path on success."
+	);
 });
 
 QUnit.test("boxClaimedOn function", function(assert) {	
 	// function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
+	assert.deepEqual(true, true, "not implemented.");
 });
 
 QUnit.test("claimBoxSide function", function(assert) {
 	// function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
+	assert.deepEqual(true, true, "not implemented.");
 });
 
 QUnit.test("determineBoxOwner function", function(assert) {
 	// function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
+	assert.deepEqual(true, true, "not implemented.");
 });
 
 QUnit.test("playTurn function", function(assert) {
 	// function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate)
+	assert.deepEqual(true, true, "not implemented.");
 });

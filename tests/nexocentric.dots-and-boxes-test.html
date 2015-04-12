@@ -17,5 +17,20 @@
 		<script type="text/javascript" src="qunit.js"></script>
 		<script type="text/javascript" src="nexocentric.dots-and-boxes-test.js"></script>
 		
+		<div class="row">
+			<div class="medium-1 columns"><img src="../images/dot.svg"></div>
+			<div class="medium-2 columns horizontal-1-1"><img src="../images/0-horizontal.svg" onclick="turnsTaken += playTurn(HORIZONTAL, 1, 1);"></div>
+			<div class="medium-1 columns"><img src="../images/dot.svg"></div>
+			<div class="medium-2 columns horizontal-2-1"><img src="../images/0-horizontal.svg" onclick="turnsTaken += playTurn(HORIZONTAL, 2, 1);"></div>
+			<div class="medium-1 columns"><img src="../images/dot.svg"></div>
+		</div>
+
+		<div class="row">
+			<div class="medium-1 columns vertical-1-1"><img src="../images/0-vertical.svg" onclick="turnsTaken += playTurn(VERTICAL, 1, 1);"></div>
+			<div class="medium-2 columns box-1-1"><img src="../images/0-box.svg"></div>
+			<div class="medium-1 columns vertical-2-1"><img src="../images/0-vertical.svg" onclick="turnsTaken += playTurn(VERTICAL, 2, 1);"></div>
+			<div class="medium-2 columns box-2-1"><img src="../images/0-box.svg"></div>
+			<div class="medium-1 columns vertical-3-1"><img src="../images/0-vertical.svg" onclick="turnsTaken += playTurn(VERTICAL, 3, 1);"></div>
+		</div>
 	</body>
 </html>
