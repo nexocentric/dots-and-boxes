@@ -86,13 +86,38 @@ QUnit.test("replaceResource function", function(assert) {
 	);
 });
 
-QUnit.test("boxClaimedOn function", function(assert) {	
-	// function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
-	assert.deepEqual(true, true, "not implemented.");
+QUnit.test("claimBoxSide function", function(assert) {
+	var returnValue = claimBoxSide(HORIZONTAL, -1, 0);
+	assert.deepEqual(
+		returnValue,
+		-1,
+		"Returns -1 x coordinate outside of range."
+	);
+
+	returnValue = claimBoxSide(HORIZONTAL, -1, GAME_GRID_ROWS + BOX_OFFSET);
+	assert.deepEqual(
+		returnValue,
+		-1,
+		"Returns -1 y coordinate outside of range."
+	);
+
+	returnValue = claimBoxSide(HORIZONTAL, 1, 1);
+	assert.deepEqual(
+		returnValue,
+		false,
+		"Returns false if side unclaimed."
+	);
+
+	returnValue = claimBoxSide(HORIZONTAL, 1, 1);
+	assert.deepEqual(
+		returnValue,
+		true,
+		"Returns true if side already claimed."
+	);
 });
 
-QUnit.test("claimBoxSide function", function(assert) {
-	// function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
+QUnit.test("boxClaimedOn function", function(assert) {	
+	// function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 	assert.deepEqual(true, true, "not implemented.");
 });
 

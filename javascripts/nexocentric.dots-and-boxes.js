@@ -208,6 +208,7 @@ function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 // [return]
 // 1) true if the line was already claimed
 // 2) false if was previously unclaimed
+// 3) returns -1 if the coordinates are out of range
 //==========================================================
 function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 {
@@ -217,6 +218,31 @@ function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 	var sideClaimed = false;
 	var selectedBoxClaims = "";
 	var adjacentBoxClaims = "";
+	var xCoordinateMax = GAME_GRID_COLUMNS + BOX_OFFSET;
+	var xCoordinateMin = 0;
+	var yCoordinateMax = GAME_GRID_COLUMNS + BOX_OFFSET;
+	var yCoordinateMin = 0;
+	var xWithinRange = false;
+	var yWithinRange = false;
+
+	//--------------------------------------
+	// setup range checks
+	//--------------------------------------
+	xWithinRange = (
+		xCoordinateMin <= xLineCoordinate 
+		&& xLineCoordinate < xCoordinateMax
+	);
+	yWithinRange = (
+		yCoordinateMin <= yLineCoordinate
+		&& yLineCoordinate < yCoordinateMax
+	);
+
+	//--------------------------------------
+	// test range
+	//--------------------------------------
+	if (!xWithinRange || !yWithinRange) {
+		return -1;
+	}
 
 	//--------------------------------------
 	// use the orientation of the line
