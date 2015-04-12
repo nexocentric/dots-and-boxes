@@ -197,11 +197,53 @@ QUnit.test("boxClaimedOn function", function(assert) {
 });
 
 QUnit.test("determineBoxOwner function", function(assert) {
-	// function determineBoxOwner(lineOrientation, xBoxCoordinate, yBoxCoordinate)
+	//var returnValue = determineBoxOwner(HORIZON, xBoxCoordinate, yBoxCoordinate);
 	assert.deepEqual(true, true, "not implemented.");
 });
 
 QUnit.test("playTurn function", function(assert) {
-	// function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate)
-	assert.deepEqual(true, true, "not implemented.");
+	//markerForCurrentPlayer
+	var returnValue = playTurn(HORIZONTAL, 2, 2);
+	assert.deepEqual(
+		returnValue, 
+		1,
+		"Returns 1 for every valid horizontal move."
+	);
+
+	returnValue = playTurn(VERTICAL, 2, 2);
+	assert.deepEqual(
+		returnValue, 
+		1,
+		"Returns 1 for every valid vertical move."
+	);
+
+	returnValue = playTurn(HORIZONTAL, 2, 2);
+	assert.deepEqual(
+		returnValue, 
+		0,
+		"Returns 0 for every invalid horizontal move."
+	);
+
+	returnValue = playTurn(VERTICAL, 2, 2);
+	assert.deepEqual(
+		returnValue, 
+		0,
+		"Returns 0 for every invalid vertical move."
+	);
+
+	returnValue = markerForCurrentPlayer;
+	playTurn(HORIZONTAL, 3, 3);
+	assert.deepEqual(
+		(returnValue == markerForCurrentPlayer), 
+		false,
+		"The player marker changes for each valid move."
+	);
+
+	returnValue = markerForCurrentPlayer;
+	playTurn(HORIZONTAL, 3, 3);
+	assert.deepEqual(
+		(returnValue == markerForCurrentPlayer), 
+		true,
+		"The player marker does not change on invalid moves."
+	);
 });
