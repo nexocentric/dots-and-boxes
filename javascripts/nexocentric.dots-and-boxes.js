@@ -138,6 +138,61 @@ function startGame()
 // [author]
 // Dodzi Y. Dzakuma
 // [summary]
+// Confirms that coordinates to be used against the grid are
+// within the size of the grid.
+// [parameters]
+// 1) the x coordinate to check
+// 2) the y coordinate to check
+// [return]
+// 1) true if coordinates within range false otherwise
+//==========================================================
+function coordinatesWithinRange(xCoordinate, yCoordinate)
+{
+	//--------------------------------------
+	// declarations
+	//--------------------------------------
+	var xCoordinateMax = GAME_GRID_COLUMNS + BOX_OFFSET;
+	var xCoordinateMin = 0;
+	var yCoordinateMax = GAME_GRID_COLUMNS + BOX_OFFSET;
+	var yCoordinateMin = 0;
+	var xWithinRange = false;
+	var yWithinRange = false;
+
+	//--------------------------------------
+	// initializations
+	//--------------------------------------
+	if (xCoordinate == null) {
+		xCoordinate = -1;
+	}
+	if (yCoordinate === null) {
+		yCoordinate = -1;
+	}
+
+	//--------------------------------------
+	// setup range checks
+	//--------------------------------------
+	xWithinRange = (
+		xCoordinateMin <= xCoordinate
+		&& xCoordinate < xCoordinateMax
+	);
+	yWithinRange = (
+		yCoordinateMin <= yCoordinate
+		&& yCoordinate < yCoordinateMax
+	);
+
+	//--------------------------------------
+	// test range
+	//--------------------------------------
+	if (xWithinRange && yWithinRange) {
+		return true;
+	}
+	return false;
+}
+
+//==========================================================
+// [author]
+// Dodzi Y. Dzakuma
+// [summary]
 // Dynamically loads an image to be used to mark an action
 // on the board.
 // [parameters]
@@ -186,10 +241,22 @@ function replaceResource(playerMarker, resourceType, xCoordinate, yCoordinate) {
 // 2) the column of the box
 // 3) the row of the box
 // [return]
-// 1) true if claimed false otherwise
+// 1) true if claimed
+// 2) false if not claimed
+// 3) -1 if coordinates are out of range
 //==========================================================
 function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
 {
+	//--------------------------------------
+	// safety check
+	//--------------------------------------
+	if (!coordinatesWithinRange(xLineCoordinate, yLineCoordinate)) {
+		return -1;
+	}
+
+	//--------------------------------------
+	// check claims
+	//--------------------------------------
 	if (boxesClaimed[xLineCoordinate][yLineCoordinate].indexOf(side) > -1) {
 		return true;
 	}
@@ -218,29 +285,11 @@ function claimBoxSide(lineOrientation, xLineCoordinate, yLineCoordinate)
 	var sideClaimed = false;
 	var selectedBoxClaims = "";
 	var adjacentBoxClaims = "";
-	var xCoordinateMax = GAME_GRID_COLUMNS + BOX_OFFSET;
-	var xCoordinateMin = 0;
-	var yCoordinateMax = GAME_GRID_COLUMNS + BOX_OFFSET;
-	var yCoordinateMin = 0;
-	var xWithinRange = false;
-	var yWithinRange = false;
 
 	//--------------------------------------
-	// setup range checks
+	// safety check
 	//--------------------------------------
-	xWithinRange = (
-		xCoordinateMin <= xLineCoordinate 
-		&& xLineCoordinate < xCoordinateMax
-	);
-	yWithinRange = (
-		yCoordinateMin <= yLineCoordinate
-		&& yLineCoordinate < yCoordinateMax
-	);
-
-	//--------------------------------------
-	// test range
-	//--------------------------------------
-	if (!xWithinRange || !yWithinRange) {
+	if (!coordinatesWithinRange(xLineCoordinate, yLineCoordinate)) {
 		return -1;
 	}
 

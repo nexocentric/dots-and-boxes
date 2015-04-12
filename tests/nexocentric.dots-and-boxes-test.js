@@ -18,7 +18,7 @@ IMAGES_FOLDER = "../images";
 function validateArray(arrayToValidate)
 {
 	if (
-		typeof arrayToValidate != "undefined" 
+		typeof arrayToValidate != "undefined"
 		&& arrayToValidate != null 
 		&& arrayToValidate.length != null
 		&& arrayToValidate.length > 0
@@ -86,19 +86,56 @@ QUnit.test("replaceResource function", function(assert) {
 	);
 });
 
+QUnit.test("coordinatesWithinRange function", function(assert) {
+	var returnValue = coordinatesWithinRange(-1, 0);
+	assert.deepEqual(
+		returnValue,
+		false,
+		"Returns false if x is too small."
+	);
+	returnValue = coordinatesWithinRange(GAME_GRID_COLUMNS + BOX_OFFSET, 0);
+	assert.deepEqual(
+		returnValue,
+		false,
+		"Returns false if x is too big."
+	);
+
+
+	returnValue = coordinatesWithinRange(0, -1);
+	assert.deepEqual(
+		returnValue,
+		false,
+		"Returns false if y is too small."
+	);
+
+	returnValue = coordinatesWithinRange(0, GAME_GRID_ROWS + BOX_OFFSET);
+	assert.deepEqual(
+		returnValue,
+		false,
+		"Returns false if y is too big."
+	);
+
+	returnValue = coordinatesWithinRange(GAME_GRID_COLUMNS, GAME_GRID_ROWS);
+	assert.deepEqual(
+		returnValue,
+		true,
+		"Returns true when coordinates within range."
+	);
+});
+
 QUnit.test("claimBoxSide function", function(assert) {
 	var returnValue = claimBoxSide(HORIZONTAL, -1, 0);
 	assert.deepEqual(
 		returnValue,
 		-1,
-		"Returns -1 x coordinate outside of range."
+		"Returns -1 if x coordinate outside of range."
 	);
 
 	returnValue = claimBoxSide(HORIZONTAL, -1, GAME_GRID_ROWS + BOX_OFFSET);
 	assert.deepEqual(
 		returnValue,
 		-1,
-		"Returns -1 y coordinate outside of range."
+		"Returns -1 if y coordinate outside of range."
 	);
 
 	returnValue = claimBoxSide(HORIZONTAL, 1, 1);
@@ -117,8 +154,34 @@ QUnit.test("claimBoxSide function", function(assert) {
 });
 
 QUnit.test("boxClaimedOn function", function(assert) {	
-	// function boxClaimedOn(side, xLineCoordinate, yLineCoordinate)
-	assert.deepEqual(true, true, "not implemented.");
+	var returnValue = boxClaimedOn(TOP, GAME_GRID_COLUMNS + BOX_OFFSET, 0);
+	assert.deepEqual(
+		returnValue,
+		-1, 
+		"Returns -1 if x coordinate outside of range."
+	);
+
+	returnValue = boxClaimedOn(TOP, 0, -1);
+	assert.deepEqual(
+		returnValue,
+		-1, 
+		"Returns -1 if y coordinate outside of range."
+	);
+
+	returnValue = boxClaimedOn(TOP, 1, 2);
+	assert.deepEqual(
+		returnValue,
+		false, 
+		"Returns false if side unclaimed."
+	);
+
+	claimBoxSide(HORIZONTAL, 1, 1);
+	returnValue = boxClaimedOn(TOP, 1, 1);
+	assert.deepEqual(
+		returnValue,
+		true, 
+		"Returns true if side claimed."
+	);
 });
 
 QUnit.test("determineBoxOwner function", function(assert) {
