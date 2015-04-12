@@ -420,8 +420,9 @@ function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate)
 			finishedMessage = "Player One Wins!";
 		} else if (playerOneScore < playerTwoScore) {
 			finishedMessage = "Player Two Wins!";
+		} else {
+			finishedMessage = "Tie Game!";
 		}
-		finishedMessage = "Tie Game!";
 
 		//--------------------------------------
 		// display the message and ask if they
