@@ -36,9 +36,6 @@ QUnit.test("createArray function", function(assert) {
 	assert.deepEqual(returnValue.length, 4, "Returns a one dimensional array if only column numbers are passed.");
 	assert.deepEqual(returnValue[0], "0", "Returns a one dimensional array if only column numbers are passed.");
 
-	returnValue = validateArray(returnValue[0][0]);
-	assert.deepEqual(returnValue, false, "Second dimension should not exist.");
-
 	returnValue = createArray(4, 4);
 	assert.deepEqual(returnValue.length, 4, "Returns a one dimensional array if only column numbers are passed.");
 	assert.deepEqual(returnValue[0].length, 4, "Returns an empty array if no parameters passed.");

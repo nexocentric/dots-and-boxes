@@ -67,9 +67,10 @@ function createArray(numberOfColumns, numberOfRows)
 		}
 
 		return createdArray;
-	} else {
-		createdArray = new Array(numberOfColumns);
 	}
+	// } else {
+	// 	createdArray = new Array(numberOfColumns);
+	// }
 
 	//--------------------------------------
 	// create a multidimensional array and
@@ -534,9 +535,9 @@ function playTurn(lineOrientation, xLineCoordinate, yLineCoordinate)
 			&& confirm(finishedMessage + "\n\nWould you like to play again?")) {
 			window.location.reload(true);
 		}
+	} else {
+		alertPlayer(markerForCurrentPlayer);
 	}
-
-	alertPlayer(markerForCurrentPlayer);
 	return 1;
 }
 
